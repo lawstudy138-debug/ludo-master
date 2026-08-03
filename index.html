@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#7c3aed" />
+  <meta name="description" content="Premium offline Ludo game with AI opponents, animations, voice announcements and rewards." />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ludo Master" />
+  <meta name="application-name" content="Ludo Master" />
+  <meta name="msapplication-TileColor" content="#7c3aed" />
+  <meta name="msapplication-tap-highlight" content="no" />
+
+  <title>Ludo Master — Premium Offline</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-72.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Optional online font (falls back to system if offline) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="dark">
+  <!-- ==================== HOME SCREEN ==================== -->
+  <div id="screen-home" class="screen active">
+    <div class="bg-animated"></div>
+    <div class="home-content">
+      <div class="logo-area">
+        <div class="logo-icon">🎲</div>
+        <h1 class="game-title">LUDO<span>MASTER</span></h1>
+        <p class="tagline">Premium Offline Edition</p>
+      </div>
+      <nav class="home-menu">
+        <button class="menu-btn primary" data-action="play">▶ Play Game</button>
+        <button class="menu-btn" data-action="settings">⚙ Settings</button>
+        <button class="menu-btn" data-action="profile">👤 Profile</button>
+        <button class="menu-btn" data-action="help">❓ Help</button>
+        <button class="menu-btn" data-action="about">ℹ About</button>
+      </nav>
+      <div class="home-footer">
+        <button id="theme-toggle" class="icon-btn" title="Toggle Theme">🌙</button>
+        <button id="sound-toggle" class="icon-btn" title="Sound">🔊</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODE SELECT ==================== -->
+  <div id="screen-mode" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-back="home">←</button>
+      <h2>Select Mode</h2>
+    </div>
+    <div class="mode-grid">
+      <button class="mode-card" data-players="1">
+        <span class="mode-icon">🤖</span>
+        <span class="mode-title">Single Player</span>
+        <span class="mode-desc">vs AI</span>
+      </button>
+      <button class="mode-card" data-players="2">
+        <span class="mode-icon">👥</span>
+        <span class="mode-title">2 Players</span>
+        <span class="mode-desc">Local</span>
+      </button>
+      <button class="mode-card" data-players="3">
+        <span class="mode-icon">👨‍👦‍👦</span>
+        <span class="mode-title">3 Players</span>
+        <span class="mode-desc">Local</span>
+      </button>
+      <button class="mode-card" data-players="4">
+        <span class="mode-icon">👨‍👩‍👧‍👦</span>
+        <span class="mode-title">4 Players</span>
+        <span class="mode-desc">Full Board</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== DIFFICULTY (Single Player) ==================== -->
+  <div id="screen-difficulty" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-back="mode">←</button>
+      <h2>AI Difficulty</h2>
+    </div>
+    <div class="diff-grid">
+      <button class="diff-card" data-diff="easy">
+        <span class="diff-icon">😊</span>
+        <span class="diff-title">Easy</span>
+        <span class="diff-desc">Beginner friendly • Simple moves</span>
+      </button>
+      <button class="diff-card" data-diff="medium">
+        <span class="diff-icon">😐</span>
+        <span class="diff-title">Medium</span>
+        <span class="diff-desc">Balanced • Moderate strategy</span>
+      </button>
+      <button class="diff-card selected" data-diff="hard">
+        <span class="diff-icon">😈</span>
+        <span class="diff-title">Hard</span>
+        <span class="diff-desc">Smart AI • Aggressive & defensive</span>
+      </button>
+    </div>
+    <button class="btn-continue" id="diff-continue">Continue →</button>
+  </div>
+
+  <!-- ==================== PLAYER SETUP ==================== -->
+  <div id="screen-setup" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-back="mode">←</button>
+      <h2>Player Setup</h2>
+    </div>
+    <div id="setup-players" class="setup-list"></div>
+    <button class="btn-continue" id="start-game-btn">Start Game 🎲</button>
+  </div>
+
+  <!-- ==================== GAME SCREEN ==================== -->
+  <div id="screen-game" class="screen">
+    <div class="game-topbar">
+      <button id="pause-btn" class="icon-btn">⏸</button>
+      <div id="turn-indicator" class="turn-box">
+        <div class="turn-avatar" id="turn-avatar">🔴</div>
+        <div class="turn-info">
+          <span id="turn-name">Red</span>
+          <span id="turn-status">Your Turn</span>
+        </div>
+      </div>
+      <button id="sound-btn-game" class="icon-btn">🔊</button>
+    </div>
+
+    <div class="board-wrapper">
+      <div id="ludo-board" class="ludo-board">
+        <!-- Board cells generated by JS -->
+      </div>
+      <div id="tokens-layer" class="tokens-layer"></div>
+    </div>
+
+    <div class="game-bottom">
+      <div class="dice-area">
+        <div id="dice" class="dice">
+          <div class="dice-face" data-value="1">⚀</div>
+        </div>
+        <button id="roll-btn" class="roll-btn">ROLL</button>
+      </div>
+      <div id="suggestion-box" class="suggestion hidden">
+        <span>💡 Suggested move highlighted</span>
+      </div>
+      <div id="player-panels" class="player-panels"></div>
+    </div>
+  </div>
+
+  <!-- ==================== PAUSE MENU ==================== -->
+  <div id="overlay-pause" class="overlay">
+    <div class="modal glass">
+      <h3>Paused</h3>
+      <button class="menu-btn" data-pause="resume">Resume</button>
+      <button class="menu-btn" data-pause="restart">Restart Match</button>
+      <button class="menu-btn" data-pause="home">Home</button>
+      <button class="menu-btn" data-pause="settings">Settings</button>
+      <button class="menu-btn danger" data-pause="quit">Quit</button>
+    </div>
+  </div>
+
+  <!-- ==================== RESULT SCREEN ==================== -->
+  <div id="screen-result" class="screen">
+    <div class="result-content">
+      <div id="result-trophy" class="trophy">🏆</div>
+      <h2 id="result-title">Champion!</h2>
+      <p id="result-msg">Congratulations!</p>
+      <div id="ranking-list" class="ranking-list"></div>
+      <div class="result-actions">
+        <button class="menu-btn primary" id="play-again-btn">Play Again</button>
+        <button class="menu-btn" id="new-match-btn">New Match</button>
+        <button class="menu-btn" id="result-home-btn">Home</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SETTINGS ==================== -->
+  <div id="screen-settings" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-back="home">←</button>
+      <h2>Settings</h2>
+    </div>
+    <div class="settings-list">
+      <div class="setting-item">
+        <label>Theme</label>
+        <div class="toggle-group">
+          <button class="toggle-btn" data-theme="dark">Dark</button>
+          <button class="toggle-btn" data-theme="light">Light</button>
+        </div>
+      </div>
+      <div class="setting-item">
+        <label>Sound</label>
+        <input type="checkbox" id="set-sound" checked />
+      </div>
+      <div class="setting-item">
+        <label>Music Volume</label>
+        <input type="range" id="vol-music" min="0" max="100" value="40" />
+      </div>
+      <div class="setting-item">
+        <label>Voice Volume</label>
+        <input type="range" id="vol-voice" min="0" max="100" value="80" />
+      </div>
+      <div class="setting-item">
+        <label>Effects Volume</label>
+        <input type="range" id="vol-fx" min="0" max="100" value="70" />
+      </div>
+      <div class="setting-item">
+        <label>Animation Speed</label>
+        <select id="anim-speed">
+          <option value="0.7">Fast</option>
+          <option value="1" selected>Normal</option>
+          <option value="1.4">Slow</option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label>Voice Announcements</label>
+        <input type="checkbox" id="set-voice" checked />
+      </div>
+      <button class="menu-btn danger" id="reset-settings">Reset Settings</button>
+    </div>
+  </div>
+
+  <!-- ==================== HELP ==================== -->
+  <div id="screen-help" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-back="home">←</button>
+      <h2>How to Play</h2>
+    </div>
+    <div class="help-content">
+      <h3>🎯 Objective</h3>
+      <p>Move all 4 of your tokens from start to home. First to finish wins.</p>
+      <h3>🎲 Dice</h3>
+      <p>Roll a 6 to bring a token out. Extra turn on 6. Three 6s in a row → turn skipped.</p>
+      <h3>✂️ Capture</h3>
+      <p>Land on an opponent’s token to send it back to start (except safe zones).</p>
+      <h3>🏠 Safe Zones</h3>
+      <p>Starred cells and your own color path are safe.</p>
+      <h3>🏁 Home</h3>
+      <p>Exact number required to enter home. All 4 tokens home = finish.</p>
+    </div>
+  </div>
+
+  <!-- ==================== ABOUT ==================== -->
+  <div id="screen-about" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-back="home">←</button>
+      <h2>About</h2>
+    </div>
+    <div class="about-content">
+      <div class="logo-icon large">🎲</div>
+      <h3>Ludo Master</h3>
+      <p>Premium Offline Edition</p>
+      <p class="version">v1.0.0</p>
+      <p>Fully offline • No internet required<br>Built with HTML, CSS & Vanilla JS</p>
+      <p class="credits">Designed for smooth gameplay, smart AI and beautiful animations.</p>
+    </div>
+  </div>
+
+  <!-- ==================== PROFILE ==================== -->
+  <div id="screen-profile" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" data-back="home">←</button>
+      <h2>Profile</h2>
+    </div>
+    <div class="profile-content">
+      <div class="profile-avatar" id="profile-avatar">😎</div>
+      <input type="text" id="profile-name" value="Player" maxlength="12" />
+      <div class="stats-grid">
+        <div class="stat-card"><span id="stat-games">0</span><small>Games</small></div>
+        <div class="stat-card"><span id="stat-wins">0</span><small>Wins</small></div>
+        <div class="stat-card"><span id="stat-coins">0</span><small>Coins</small></div>
+        <div class="stat-card"><span id="stat-xp">0</span><small>XP</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Confetti canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <script src="js/audio.js"></script>
+  <script src="js/board.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Ludo Master SW registered:', reg.scope))
+          .catch(err => console.warn('SW registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
