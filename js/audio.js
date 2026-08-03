@@ -14,6 +14,7 @@ const AudioManager = (() => {
     return ctx;
   }
 
+  // Simple synthesized SFX using Web Audio
   function playTone(freq, duration, type = 'sine', vol = 0.3) {
     if (!soundOn) return;
     const c = getCtx();
@@ -61,6 +62,7 @@ const AudioManager = (() => {
     playTone(800, 0.05, 'sine', 0.15);
   }
 
+  // Voice using SpeechSynthesis (works offline in most browsers)
   const numberWords = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'];
 
   function speak(text, rate = 1.05) {
@@ -71,6 +73,7 @@ const AudioManager = (() => {
       u.rate = rate;
       u.pitch = 1.05;
       u.volume = volVoice;
+      // Prefer a natural English voice if available
       const voices = speechSynthesis.getVoices();
       const preferred = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Female') || v.name.includes('Samantha')));
       if (preferred) u.voice = preferred;
