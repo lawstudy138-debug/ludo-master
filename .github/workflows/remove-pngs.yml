@@ -1,0 +1,48 @@
+name: Remove PNGs from history
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  remove-png:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system deps and git-filter-repo
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git python3-pip
+          python3 -m pip install --upgrade git-filter-repo
+
+      - name: Mirror-clone repository
+        env:
+          REPO_URL: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+        run: |
+          git clone --mirror "$REPO_URL" repo.git
+
+      - name: Create backup bundle (artifact)
+        run: |
+          cd repo.git
+          git bundle create ../backup.bundle --all
+
+      - name: Upload backup bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo-backup
+          path: repo.git/../backup.bundle
+
+      - name: Remove all .png files from history
+        run: |
+          cd repo.git
+          git filter-repo --invert-paths --path-glob '*.png'
+          git reflog expire --expire=now --all
+          git gc --prune=now --aggressive
+
+      - name: Force-push cleaned repo (mirror)
+        env:
+          REPO_URL: https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+        run: |
+          cd repo.git
+          git push --force --mirror "$REPO_URL"
